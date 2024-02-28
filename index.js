@@ -14,7 +14,7 @@ const sleep = (ms = 2000) => new Promise((r) => setTimeout(r, ms));
 
 async function welcome() {
   const rainbowTitle = chalkAnimation.rainbow(
-    'How much do you know about mobiles? \n'
+    'Which Mobile OS is your favourite? \n'
   ); 
 
   await sleep();
@@ -28,7 +28,67 @@ async function welcome() {
   `);
 }
 
+
+async function askName(){
+    const answers = await inquirer.prompt({
+        name: 'player_name',
+        type: 'input',
+        message: 'What is your name?',
+        default(){
+            return 'Player';
+        },
+    });
+
+    playerName = answers.player_name;
+}
+
+
+
+async function qsn1(){
+    const answers = await inquirer.prompt({
+        name: 'qsn1',
+        type: 'list',
+        message: 'Do you prefer customization over fucntionality ?',
+        choices: ['YES', 'NO', 'IDK'],
+    });
+
+    return handleAnswer(answers.qsn1);
+}
+
+async function qsn2(){
+    const answers = await inquirer.prompt({
+        name: 'qsn2',
+        type: 'list',
+        message: 'Do you prefer a closed ecosystem?',
+        choices: ['YES', 'NO', 'IDK'],
+    });
+
+    return handleAnswer(answers.qsn2);
+}
+
+async function handleAnswer(answer){
+    const spinner = createSpinner('Checking answer...').start();
+    await sleep();
+
+    if(answer === 'NO'){
+        spinner.error({text: `💀💀💀 Game Over, you lose ${playerName}!`});
+        process.exit(1);
+    } else {
+        spinner.success({text: `Nice work ${playerName}. That's a correct answer`});
+    }
+}
+
+function winner(){
+    console.clear();
+    const msg = `Congrats , ${playerName} !\n $ 1 , 0 0 0 , 0 0 0`;
+
+    figlet(msg, (err, data) => {
+        console.log(gradient.pastel.multiline(data));
+    });
+}
+
 await welcome(); //supports top-level await in node14+
-
-
-
+await askName();
+await qsn1();
+await qsn2();
+winner();
